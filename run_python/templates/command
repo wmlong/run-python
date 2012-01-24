@@ -1,0 +1,4 @@
+python <<EOF
+from {module} import {function}
+{function}({arguments})
+EOF
