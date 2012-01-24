@@ -1,11 +1,12 @@
 import os
 import re
 import subprocess
-from run import BaseDriver, Settings
+from run import Settings
+from run.drivers.helper import HelperDriver
 from run.library.reader import Reader
 from run.library.property import cachedproperty
 
-class PythonDriver(BaseDriver):
+class PythonDriver(HelperDriver):
 
     def process(self):
         return subprocess.call(self._rendered, shell=True)
