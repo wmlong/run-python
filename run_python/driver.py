@@ -8,8 +8,12 @@ from run.library.property import cachedproperty
 
 class PythonDriver(HelperDriver):
 
-    def process(self):
+    def _run(self):
         return subprocess.call(self._rendered, shell=True)
+    
+    @property
+    def _runfile(self):
+        pass
 
     @cachedproperty
     def _rendered(self):
