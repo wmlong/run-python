@@ -1,12 +1,10 @@
 import os
-import re
 import subprocess
-from run import Settings
-from run.drivers.helper import HelperDriver
+from run.drivers.base import BaseDriver
 from run.library.reader import Reader
 from run.library.property import cachedproperty
 
-class PythonDriver(HelperDriver):
+class PythonDriver(BaseDriver):
     
     CONNECTOR = ['files', 'connector.py']    
 
