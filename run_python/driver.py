@@ -7,26 +7,31 @@ from run.library.reader import Reader
 from run.library.property import cachedproperty
 
 class PythonDriver(HelperDriver):
+    
+    CONNECTOR = ['files', 'connector.py']    
 
     def _run(self):
-        return subprocess.call(self._rendered, shell=True)
+        return subprocess.call(['python', '-c', self._connector], 
+                               env=self._environ)
     
     @property
     def _runfile(self):
         pass
 
     @cachedproperty
-    def _rendered(self):
-        return (self._reader.read('command').
-                format(module=self._module,
-                       function=self.command.function,
-                       arguments=self.command.arguments))
-        
+    def _environ(self):
+        environ = {
+            'filename': self.command.filename,
+            'function': self.command.function,
+            'arguments': self.command.arguments,           
+        }
+        environ.update(os.environ)
+        return environ
+    
     @cachedproperty
-    def _module(self):
-        return re.sub(Settings.LANGUAGS['python'], '', 
-                      self.command.filename)
+    def _connector(self):
+        return self._reader.read(*self.CONNECTOR)
     
     @cachedproperty
     def _reader(self):
-        return Reader(os.path.dirname(__file__), 'templates')
+        return Reader(os.path.dirname(__file__))
