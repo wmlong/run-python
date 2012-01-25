@@ -1,4 +1,5 @@
 import os
+import sys
 
 class Connector(object):
     
@@ -9,7 +10,10 @@ class Connector(object):
         self.arguments = environ['RUN_ARGUMENTS']
         
     def process(self):
-        pass
+        if not self.help:
+            self._run()
+        else:
+            self._help()
     
     def _run(self):
         execfile(self.filename)
@@ -18,13 +22,46 @@ class Connector(object):
     
     def _help(self):
         execfile(self.filename)
-        functions = []
+        runfile = ConnectorRunfile(locals())
+        if not self.function:
+            sys.stdout.write(runfile.reference)
+        else:
+            sys.stdout.write(runfile.functions[self.function].reference)
+        
+        
+class ConnectorRunfile(object):
+    
+    def __init__(self, namespace):
+        self.functions = []
         for obj in locals().values():
             if getattr(obj, '__module__', None) == '__main__':
-                functions.append(obj)
-        if self.function:                                   
-            pass
+                self.functions.append(ConnectorFunction(obj))
+        
+    @property
+    def reference(self):
+        lines = []
+        for function in self.functions:
+            lines.append(function.reference)
+        return '\n\n'.join(lines)
 
+
+class ConnectorFunction(object):
+    
+    def __init__(self, function):
+        self.function = function
+
+    @property
+    def reference(self):
+        lines = []
+        if self.signature:
+            lines.append(self.signature)
+        else:
+            lines.append(self.name)
+        if self.description:
+            lines.append(self.description)
+        return '\n'.join(lines)
+    
+    
 def main():    
     connector = Connector(os.environ)
     connector.run()

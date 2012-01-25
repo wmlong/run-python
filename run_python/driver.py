@@ -6,7 +6,7 @@ from run.library.property import cachedproperty
 
 class PythonDriver(BaseDriver):
     
-    CONNECTOR = ['files', 'connector.py']    
+    CONNECTOR_FILE = ['files', 'connector.py']    
 
     def process(self):
         return subprocess.call(['python', '-c', self._connector], 
@@ -25,7 +25,7 @@ class PythonDriver(BaseDriver):
     
     @cachedproperty
     def _connector(self):
-        return self._reader.read(*self.CONNECTOR)
+        return self._reader.read(*self.CONNECTOR_FILE)
     
     @cachedproperty
     def _reader(self):
