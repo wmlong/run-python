@@ -58,28 +58,35 @@ class ConnectorFunction(object):
     
     @property
     def help(self):
-        return '\n'.join([self._signature, self._docstring])
+        return '\n'.join(self._signature+self._docstring)
 
     @property
     def _signature(self):
-        return ('{name}({argstring})'.
-                format(name=self.name,
-                       argstring=self._argstring))
+        return [('{name}({argstring})'.
+                 format(name=self.name,
+                        argstring=self._argstring))]
     
     @property
     def _docstring(self):
-        return inspect.getdoc(self.function)
+        docstring = []
+        getdoc = inspect.getdoc(self.function)
+        if getdoc:
+            docstring.append(getdoc)
+        return docstring
   
     @property
     def _argstring(self):
-        return ', '.join(self._args_general+
-                         self._args_varargs+
-                         self._args_keywords)
+        return ', '.join(self._argstring_general+
+                         self._argstring_varargs+
+                         self._argstring_keywords)
 
     @property
-    def _args_general(self):
+    def _argstring_general(self):
         general = []
-        defaults = list(self._argspec.defaults)
+        if self._argspec.defaults:
+            defaults = list(self._argspec.defaults)
+        else:
+            defaults = []
         for arg in reversed(self._argspec.args):
             if not defaults:
                 general.insert(0, arg)
@@ -90,7 +97,7 @@ class ConnectorFunction(object):
         return general
     
     @property
-    def _args_varargs(self):
+    def _argstring_varargs(self):
         varargs = []
         if self._argspec.varargs:
             varargs.append('*{varargs}'.
@@ -98,7 +105,7 @@ class ConnectorFunction(object):
         return varargs
     
     @property
-    def _args_keywords(self):
+    def _argstring_keywords(self):
         keywords = []
         if self._argspec.keywords:
             keywords.append('**{keywords}'.
@@ -117,40 +124,18 @@ import unittest
 
 class ConnectorFunctionTest(unittest.TestCase):
     
-    def setUp(self):
+    def test_full(self):
         def function(a, b='default', *args, **kwargs): 
             """docstring"""
             pass
         self.confunc = ConnectorFunction(function)
- 
-    def test_name(self):
-        self.assertEqual(self.confunc.name, 
-                         'function')
- 
-    def test_help(self):
+        self.assertEqual(self.confunc.name, 'function')
         self.assertEqual(self.confunc.help, 
                          'function(a, b=default, *args, **kwargs)\ndocstring')
         
-    def test_signature(self):
-        self.assertEqual(self.confunc._signature, 
-                         'function(a, b=default, *args, **kwargs)')
-        
-    def test_docstring(self):
-        self.assertEqual(self.confunc._docstring, 
-                         'docstring')
-        
-    def test_argstring(self):
-        self.assertEqual(self.confunc._argstring, 
-                         'a, b=default, *args, **kwargs')
-        
-    def test_args_general(self):
-        self.assertEqual(self.confunc._args_general, 
-                         ['a', 'b=default'])
-
-    def test_args_varargs(self):
-        self.assertEqual(self.confunc._args_varargs, 
-                         ['*args'])
-        
-    def test_args_keywords(self):
-        self.assertEqual(self.confunc._args_keywords, 
-                         ['**kwargs'])        
+    def test_empty(self):
+        def function():
+            pass
+        self.confunc = ConnectorFunction(function)
+        self.assertEqual(self.confunc.name, 'function')
+        self.assertEqual(self.confunc.help, 'function()')        
