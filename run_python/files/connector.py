@@ -124,18 +124,29 @@ import unittest
 
 class ConnectorFunctionTest(unittest.TestCase):
     
-    def test_full(self):
+    def setUp(self):
         def function(a, b='default', *args, **kwargs): 
             """docstring"""
             pass
         self.confunc = ConnectorFunction(function)
+        
+    def test_name(self):
         self.assertEqual(self.confunc.name, 'function')
+        
+    def test_help(self):
         self.assertEqual(self.confunc.help, 
                          'function(a, b=default, *args, **kwargs)\ndocstring')
+
         
-    def test_empty(self):
-        def function():
+class EmptyFunctionConnectorFunctionTest(unittest.TestCase):
+    
+    def setUp(self):
+        def empty():
             pass
-        self.confunc = ConnectorFunction(function)
-        self.assertEqual(self.confunc.name, 'function')
-        self.assertEqual(self.confunc.help, 'function()')        
+        self.confunc = ConnectorFunction(empty)
+    
+    def test_name(self):
+        self.assertEqual(self.confunc.name, 'empty') 
+        
+    def test_help(self):
+        self.assertEqual(self.confunc.help, 'empty()')               
