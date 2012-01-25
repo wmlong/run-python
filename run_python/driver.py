@@ -8,13 +8,9 @@ class PythonDriver(BaseDriver):
     
     CONNECTOR = ['files', 'connector.py']    
 
-    def _run(self):
+    def process(self):
         return subprocess.call(['python', '-c', self._connector], 
                                env=self._environ)
-    
-    @property
-    def _runfile(self):
-        pass
 
     @cachedproperty
     def _environ(self):
