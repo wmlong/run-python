@@ -22,8 +22,9 @@ class Connector(object):
     
     def _run(self):
         execfile(self.filename)
-        exec '{function}({arguments})'.format(function=self.function,
-                                              arguments=self.arguments)
+        exec ('{function}({arguments})'.
+              format(function=self.function,
+                     arguments=self.arguments))
     
     def _help(self):
         execfile(self.filename)
@@ -44,7 +45,8 @@ class ConnectorFile(object):
         
     @property
     def help(self):
-        return '\n'.join(function.name for function in self.functions)
+        return '\n'.join(function.name 
+                         for function in self.functions)
 
 
 class ConnectorFunction(object):
@@ -91,9 +93,10 @@ class ConnectorFunction(object):
             if not defaults:
                 general.insert(0, arg)
             else:
-                general.insert(0, '{arg}={default}'. #TODO: quotes?
+                default = repr(defaults.pop())
+                general.insert(0, '{arg}={default}'.
                                   format(arg=arg, 
-                                         default=defaults.pop()))
+                                         default=default))
         return general
     
     @property
@@ -134,11 +137,12 @@ class ConnectorFunctionTest(unittest.TestCase):
         self.assertEqual(self.confunc.name, 'function')
         
     def test_help(self):
-        self.assertEqual(self.confunc.help, 
-                         'function(a, b=default, *args, **kwargs)\ndocstring')
+        self.assertEqual(
+            self.confunc.help, 
+            "function(a, b='default', *args, **kwargs)\ndocstring")
 
         
-class EmptyFunctionConnectorFunctionTest(unittest.TestCase):
+class ConnectorFunctionTest_empty_function(unittest.TestCase):
     
     def setUp(self):
         def empty():
