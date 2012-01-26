@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 import inspect
  
 def main():    
@@ -9,39 +10,38 @@ def main():
 class Connector(object):
     
     def __init__(self, environ):
-        self.help = environ['RUN_HELP']
-        self.filename = environ['RUN_FILENAME']
-        self.function = environ['RUN_FUNCTION']
-        self.arguments = environ['RUN_ARGUMENTS']
+        self.command = json.loads(environ['RUN_COMMAND'])
         
     def process(self):
-        if not self.help:
+        if not self.command['help']:
             self._run()
         else:
             self._help()
     
     def _run(self):
-        execfile(self.filename)
+        execfile(self.command['filename'])
         exec ('{function}({arguments})'.
-              format(function=self.function,
-                     arguments=self.arguments))
+              format(function=self.command['function'],
+                     arguments=self.command['arguments']))
     
     def _help(self):
-        execfile(self.filename)
+        execfile(self.command['filename'])
         confile = ConnectorFile(locals())
-        if not self.function:
+        if not self.command['function']:
             sys.stdout.write(confile.help)
         else:
-            sys.stdout.write(confile.functions[self.function].help)
+            sys.stdout.write(confile.
+                             functions[self.command['function']].
+                             help)
         
         
 class ConnectorFile(object):
     
     def __init__(self, namespace):
-        self.functions = []
-        for obj in locals().values():
+        self.functions = {}
+        for name, obj in locals().items():
             if getattr(obj, '__module__', None) == '__main__':
-                self.functions.append(ConnectorFunction(obj))
+                self.functions[name] = ConnectorFunction(obj)
         
     @property
     def help(self):

@@ -1,7 +1,7 @@
 import sys
 
-def name():
+def name(a, b='default', *args, **kwargs):
     """
-    doc
+    docstring
     """
     sys.stdout.write('output') 

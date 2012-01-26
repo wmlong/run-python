@@ -15,10 +15,7 @@ class PythonDriver(BaseDriver):
     @cachedproperty
     def _environ(self):
         environ = {
-            'RUN_HELP': self.command.help,
-            'RUN_FILENAME': self.command.filename,
-            'RUN_FUNCTION': self.command.function,
-            'RUN_ARGUMENTS': self.command.arguments,           
+            'RUN_COMMAND': self.command.json,           
         }
         environ.update(os.environ)
         return environ
