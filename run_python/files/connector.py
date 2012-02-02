@@ -46,7 +46,7 @@ class ConnectorFile(object):
     @property
     def help(self):
         return '\n'.join(function.name 
-                         for function in self.functions)
+                         for function in self.functions)+'\n'
 
 
 class ConnectorFunction(object):
@@ -60,7 +60,7 @@ class ConnectorFunction(object):
     
     @property
     def help(self):
-        return '\n'.join(self._signature+self._docstring)
+        return '\n'.join(self._signature+self._docstring)+'\n'
 
     @property
     def _signature(self):
@@ -137,7 +137,7 @@ class ConnectorFileTest(unittest.TestCase):
         self.confile = ConnectorFile(locals())
         
     def test_help(self):
-        self.assertEqual(self.confile.help, 'function1\nfunction2')
+        self.assertEqual(self.confile.help, 'function1\nfunction2\n')
         
 
 class ConnectorFunctionTest(unittest.TestCase):
@@ -154,7 +154,7 @@ class ConnectorFunctionTest(unittest.TestCase):
     def test_help(self):
         self.assertEqual(
             self.confunc.help, 
-            "function(a, b='default', *args, **kwargs)\ndocstring")
+            "function(a, b='default', *args, **kwargs)\ndocstring\n")
 
         
 class ConnectorFunctionTest_empty_function(unittest.TestCase):
@@ -168,4 +168,4 @@ class ConnectorFunctionTest_empty_function(unittest.TestCase):
         self.assertEqual(self.confunc.name, 'empty') 
         
     def test_help(self):
-        self.assertEqual(self.confunc.help, 'empty()')               
+        self.assertEqual(self.confunc.help, 'empty()\n')               
