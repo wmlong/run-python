@@ -38,10 +38,10 @@ class Connector(object):
 class ConnectorFile(object):
     
     def __init__(self, namespace):
-        self.functions = {}
-        for name, obj in locals().items():
+        self.functions = []
+        for obj in namespace.values():
             if getattr(obj, '__module__', None) == '__main__':
-                self.functions[name] = ConnectorFunction(obj)
+                self.functions.append(ConnectorFunction(obj))
         
     @property
     def help(self):
@@ -124,6 +124,21 @@ if __name__ == '__main__':
     main()           
 
 import unittest
+
+class ConnectorFileTest(unittest.TestCase):
+    
+    def setUp(self):
+        def function1(): 
+            pass
+        def function2(): 
+            pass        
+        function1.__module__ = '__main__'
+        function2.__module__ = '__main__'
+        self.confile = ConnectorFile(locals())
+        
+    def test_help(self):
+        self.assertEqual(self.confile.help, 'function1\nfunction2')
+        
 
 class ConnectorFunctionTest(unittest.TestCase):
     
