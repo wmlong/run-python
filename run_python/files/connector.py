@@ -13,7 +13,7 @@ class Connector(object):
         self.command = json.loads(environ['RUN_COMMAND'])
         
     def process(self):
-        if not self.command['help']:
+        if not self.command['ishelp']:
             self._run()
         else:
             self._help()
