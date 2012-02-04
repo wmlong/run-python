@@ -3,6 +3,12 @@ import subprocess
 from run.library.patcher import Patcher
 from run_python import PythonDriver  
      
+#Fixtures   
+class Command(object):
+    
+    json = {}     
+     
+#Tests     
 class PythonDriverTest(unittest.TestCase):       
       
     PATCH = {
@@ -12,7 +18,7 @@ class PythonDriverTest(unittest.TestCase):
     def setUp(self):
         self.patcher = Patcher(globals())
         self.patcher.patch(self.PATCH)
-        self.command = CommandFixture() 
+        self.command = Command() 
         self.driver = PythonDriver(self.command)
         
     def tearDown(self):
@@ -26,9 +32,4 @@ class PythonDriverTest(unittest.TestCase):
         self.assertEqual(self.driver._environ['RUN_COMMAND'], {})
         
     def test_connector(self):
-        self.assertIn('Connector', self.driver._connector)
-        
-                  
-class CommandFixture(object):
-    
-    json = {}             
+        self.assertIn('Connector', self.driver._connector)             

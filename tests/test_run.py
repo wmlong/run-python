@@ -2,7 +2,7 @@ import unittest
 from run import Command
 from run_python import PythonDriver
 
-class RunTest_base(unittest.TestCase):
+class RunTest(unittest.TestCase):
     
     def setUp(self):
         #TODO: set cwd
@@ -10,7 +10,7 @@ class RunTest_base(unittest.TestCase):
         self.driver = PythonDriver(self.command)
 
 
-class RunTest_run(RunTest_base):
+class RunTest_run(RunTest):
     
     ARGV = ['run', 'name', '1']
 
@@ -18,7 +18,7 @@ class RunTest_run(RunTest_base):
         self.driver.process()
         
         
-class RunTest_help(RunTest_base):
+class RunTest_help(RunTest):
     
     ARGV = ['run', '-h']
 
