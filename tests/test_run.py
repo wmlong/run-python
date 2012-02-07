@@ -1,26 +1,34 @@
+import sys
 import unittest
-from run import Command
-from run_python import PythonDriver
+from run.library.patcher import Patcher
+from run.scripts.run import run
 
 class RunTest(unittest.TestCase):
     
     def setUp(self):
         #TODO: set cwd
-        self.command = Command(self.ARGV)
-        self.driver = PythonDriver(self.command)
+        self.patcher = Patcher(globals())
+        self.patcher.patch(self.PATCH)
+        
+    def tearDown(self):
+        self.patcher.restore()
 
 
 class RunTest_run(RunTest):
     
-    ARGV = ['run', 'name', '1']
-
+    PATCH = {
+        'sys.argv': ['run', 'name', '1'],        
+    }
+    
     def test(self):
-        self.driver.process()
-        
-        
+        run()
+
+      
 class RunTest_help(RunTest):
     
-    ARGV = ['run', '-h']
-
+    PATCH = {
+        'sys.argv': ['run', '-h'],        
+    }
+            
     def test(self):
-        self.driver.process()
+        self.assertRaises(SystemExit, run)

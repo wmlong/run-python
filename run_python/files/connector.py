@@ -40,7 +40,8 @@ class ConnectorFile(object):
     def __init__(self, namespace):
         self.functions = []
         for obj in namespace.values():
-            if getattr(obj, '__module__', None) == '__main__':
+            if (hasattr(obj, '__call__') and
+                getattr(obj, '__module__', None) == '__main__'):
                 self.functions.append(ConnectorFunction(obj))
         
     @property
