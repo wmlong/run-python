@@ -15,7 +15,7 @@ class PythonDriver(BaseDriver):
     @cachedproperty
     def _environ(self):
         environ = {
-            'RUN_COMMAND': self.command.json,           
+            'RUN_COMMAND': self._command.json,           
         }
         environ.update(os.environ)
         return environ

@@ -10,28 +10,28 @@ def main():
 class Connector(object):
     
     def __init__(self, environ):
-        self.command = json.loads(environ['RUN_COMMAND'])
+        self._command = json.loads(environ['RUN_COMMAND'])
         
     def process(self):
-        if not self.command['ishelp']:
+        if not self._command['ishelp']:
             self._run()
         else:
             self._help()
     
     def _run(self):
-        execfile(self.command['filename'])
+        execfile(self._command['filename'])
         exec ('{function}({arguments})'.
-              format(function=self.command['function'],
-                     arguments=self.command['arguments']))
+              format(function=self._command['function'],
+                     arguments=self._command['arguments']))
     
     def _help(self):
-        execfile(self.command['filename'])
+        execfile(self._command['filename'])
         confile = ConnectorFile(locals())
-        if not self.command['function']:
+        if not self._command['function']:
             sys.stdout.write(confile.help)
         else:
             sys.stdout.write(confile.
-                             functions[self.command['function']].
+                             functions[self._command['function']].
                              help)
         
         
@@ -52,11 +52,11 @@ class ConnectorFile(object):
 class ConnectorFunction(object):
     
     def __init__(self, function):
-        self.function = function
+        self._function = function
     
     @property
     def name(self):
-        return self.function.func_name
+        return self._function.func_name
     
     @property
     def help(self):
@@ -71,7 +71,7 @@ class ConnectorFunction(object):
     @property
     def _docstring(self):
         docstring = []
-        getdoc = inspect.getdoc(self.function)
+        getdoc = inspect.getdoc(self._function)
         if getdoc:
             docstring.append(getdoc)
         return docstring
@@ -117,7 +117,7 @@ class ConnectorFunction(object):
 
     @property
     def _argspec(self):
-        return inspect.getargspec(self.function)
+        return inspect.getargspec(self._function)
 
     
 if __name__ == '__main__':
