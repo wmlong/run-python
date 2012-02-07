@@ -22,7 +22,7 @@ class RunTest_run(RunTest):
     
     def test(self):
         run()
-
+        
       
 class RunTest_help(RunTest):
     
@@ -32,3 +32,13 @@ class RunTest_help(RunTest):
             
     def test(self):
         self.assertRaises(SystemExit, run)
+                
+        
+class RunTest_help_function(RunTest):
+    
+    PATCH = {
+        'sys.argv': ['run', 'name', '-h'],        
+    }
+            
+    def test(self):
+        run() 

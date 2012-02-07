@@ -38,16 +38,15 @@ class Connector(object):
 class ConnectorFile(object):
     
     def __init__(self, namespace):
-        self.functions = []
-        for obj in namespace.values():
+        self.functions = {}
+        for name, obj in namespace.items():
             if (hasattr(obj, '__call__') and
                 getattr(obj, '__module__', None) == '__main__'):
-                self.functions.append(ConnectorFunction(obj))
+                self.functions[name] = ConnectorFunction(obj)
         
     @property
     def help(self):
-        return '\n'.join(function.name 
-                         for function in self.functions)+'\n'
+        return '\n'.join(name for name in self.functions)+'\n'
 
 
 class ConnectorFunction(object):
