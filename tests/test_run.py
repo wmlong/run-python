@@ -12,7 +12,6 @@ class RunTest(unittest.TestCase):
     }
     
     def setUp(self):
-        #TODO: set cwd
         self.patcher = Patcher(globals())
         self.patcher.patch(self.PATCH)
         
