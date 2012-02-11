@@ -5,6 +5,11 @@ from run.library.patcher import Patcher
 from run.scripts.run import run
 from .fixtures import process
 
+#Environ
+sys, process
+
+
+#Tests
 class RunTest(unittest.TestCase):
     
     PATCH = {
