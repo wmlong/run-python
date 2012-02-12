@@ -14,4 +14,19 @@ setup(name='run-python',
       package_data={
           'run_python': ['files/*'],
       },    
-      classifiers=[],)
+      classifiers=[
+          'Development Status :: 2 - Pre-Alpha',
+          'Environment :: Console',
+          'Intended Audience :: Developers',
+          'Intended Audience :: System Administrators',
+          #'License :: ',
+          'Operating System :: Unix',
+          'Operating System :: POSIX',
+          'Programming Language :: Python',
+          'Programming Language :: Python :: 2.7',
+          'Topic :: Software Development',
+          'Topic :: Software Development :: Libraries',
+          'Topic :: Software Development :: Libraries :: Python Modules',
+          'Topic :: System :: Systems Administration',
+          'Topic :: Utilities',  
+      ],)
