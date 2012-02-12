@@ -39,7 +39,7 @@ class RunTest_help(RunTest):
     
     PATCH = RunTest.PATCH.copy()
     PATCH.update({
-        'sys.argv': ['run', '-h'],        
+        'sys.argv': ['run', '-h'],
     })
             
     def test(self):
