@@ -1,19 +1,25 @@
 from setuptools import setup, find_packages
-from run import VERSION
+from run_python import VERSION
 
-setup(name='run-python',
+setup(#Data
+      name='run-python',
       version=VERSION,
+      packages=find_packages(exclude=['tests*']),
+      package_data={
+          'run_python': ['files/*'],
+      },      
+      #install_requires=['run_core'],
+      test_suite='nose.collector',
+      tests_require=['nose'],
+      
+      #Metadata      
       description='Run Python',
       author='Respect31',
       author_email='team@respect31.com',
       maintainer='roll',
       maintainer_email='roll@respect31.com',
       url='https://github.com/respect31/run-python',
-      download_url='https://github.com/respect31/run-python/tarball/develop',
-      packages=find_packages(exclude=['tests*']),
-      package_data={
-          'run_python': ['files/*'],
-      },    
+      download_url='https://github.com/respect31/run-python/tarball/develop',   
       classifiers=[
           'Development Status :: 2 - Pre-Alpha',
           'Environment :: Console',
