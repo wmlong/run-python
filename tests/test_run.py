@@ -22,19 +22,30 @@ class RunTest(unittest.TestCase):
         
     def tearDown(self):
         self.patcher.restore()
-
-
+        
+      
 class RunTest_run(RunTest):
     
     PATCH = RunTest.PATCH.copy()
     PATCH.update({
-        'sys.argv': ['run', 'name', '1'],        
+        'sys.argv': ['run', 'function_normal', '"1"'],        
     })
     
     def test(self):
-        run()
-        
-      
+        run()   
+
+  
+class RunTest_list(RunTest):
+    
+    PATCH = RunTest.PATCH.copy()
+    PATCH.update({
+        'sys.argv': ['run'],        
+    })
+    
+    def test(self):
+        run()  
+
+
 class RunTest_help(RunTest):
     
     PATCH = RunTest.PATCH.copy()
@@ -50,7 +61,7 @@ class RunTest_help_function(RunTest):
     
     PATCH = RunTest.PATCH.copy()
     PATCH.update({
-        'sys.argv': ['run', 'name', '-h'],        
+        'sys.argv': ['run', 'function_normal', '-h'],        
     })
             
     def test(self):

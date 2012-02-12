@@ -14,7 +14,10 @@ class Connector(object):
         
     def process(self):
         if not self._command['ishelp']:
-            self._run()
+            if self._command['function']:
+                self._run()
+            else:
+                self._list()
         else:
             self._help()
     
@@ -23,16 +26,18 @@ class Connector(object):
         exec ('{function}({arguments})'.
               format(function=self._command['function'],
                      arguments=self._command['arguments']))
-    
+        
+    def _list(self):
+        execfile(self._command['filename'])
+        confile = ConnectorFile(locals())
+        sys.stdout.write(confile.list)
+
     def _help(self):
         execfile(self._command['filename'])
         confile = ConnectorFile(locals())
-        if not self._command['function']:
-            sys.stdout.write(confile.help)
-        else:
-            sys.stdout.write(confile.
-                             functions[self._command['function']].
-                             help)
+        sys.stdout.write(confile.
+                         functions[self._command['function']].
+                         help)
         
         
 class ConnectorFile(object):
@@ -45,7 +50,7 @@ class ConnectorFile(object):
                 self.functions[name] = ConnectorFunction(obj)
         
     @property
-    def help(self):
+    def list(self):
         return '\n'.join(name for name in self.functions)+'\n'
 
 
@@ -136,9 +141,9 @@ class ConnectorFileTest(unittest.TestCase):
         function2.__module__ = '__main__'
         self.confile = ConnectorFile(locals())
         
-    def test_help(self):
-        self.assertEqual(self.confile.help, 'function1\nfunction2\n')
-        
+    def test_list(self):
+        self.assertEqual(self.confile.list, 'function1\nfunction2\n')
+
 
 class ConnectorFunctionTest(unittest.TestCase):
     
