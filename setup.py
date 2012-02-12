@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 from run import VERSION
 
 setup(name='run-python',
@@ -10,5 +10,5 @@ setup(name='run-python',
       maintainer_email='roll@respect31.com',
       url='https://github.com/respect31/run-python',
       download_url='https://github.com/respect31/run-python/tarball/develop',
-      packages=['run_python',],      
+      packages=find_packages(exclude=['tests*']),      
       classifiers=[],)
