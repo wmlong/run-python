@@ -10,5 +10,8 @@ setup(name='run-python',
       maintainer_email='roll@respect31.com',
       url='https://github.com/respect31/run-python',
       download_url='https://github.com/respect31/run-python/tarball/develop',
-      packages=find_packages(exclude=['tests*']),      
+      packages=find_packages(exclude=['tests*']),
+      package_data={
+          'run_python': ['files/*'],
+      },    
       classifiers=[],)
