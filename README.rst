@@ -1,4 +1,4 @@
 Python driver for Run
 =====================
 
-For more information please see https://github.com/respect31/run-core
+For more information - https://github.com/respect31/run-core
