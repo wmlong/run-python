@@ -16,8 +16,8 @@ setup(#Data
       description='Run Python',
       author='Respect31',
       author_email='team@respect31.com',
-      maintainer='roll',
-      maintainer_email='roll@respect31.com',
+      maintainer='Respect31',
+      maintainer_email='team@respect31.com',
       url='https://github.com/respect31/run-python',
       download_url='https://github.com/respect31/run-python/tarball/develop',   
       classifiers=[
