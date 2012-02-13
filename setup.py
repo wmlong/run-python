@@ -26,7 +26,7 @@ setup(#Data
           'Environment :: Console',
           'Intended Audience :: Developers',
           'Intended Audience :: System Administrators',
-          'License :: OSI Approved :: Apache Software License',
+          'License :: OSI Approved :: MIT License',
           'Operating System :: Unix',
           'Operating System :: POSIX',
           'Programming Language :: Python',
