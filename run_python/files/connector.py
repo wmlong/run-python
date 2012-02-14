@@ -56,7 +56,7 @@ class ConnectorFile(object):
         
     @property
     def list(self):
-        return '\n'.join(name for name in self.functions)+'\n'
+        return '\n'.join(sorted(self.functions))+'\n'
 
 
 class ConnectorFunction(object):
