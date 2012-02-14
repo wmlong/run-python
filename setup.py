@@ -13,7 +13,8 @@ setup(#Data
       tests_require=['nose'],
       
       #Metadata      
-      description='Run Python',
+      description='Python driver for Run',
+      long_description=open('README.rst').read(),
       author='Respect31',
       author_email='team@respect31.com',
       maintainer='Respect31',
