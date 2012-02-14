@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import types
 import inspect
  
 def main():    
@@ -22,31 +23,34 @@ class Connector(object):
             self._help()
     
     def _run(self):
-        execfile(self._command['filename'])
-        exec ('{function}({arguments})'.
+        exec ('self._module.{function}({arguments})'.
               format(function=self._command['function'],
                      arguments=self._command['arguments']))
         
     def _list(self):
-        execfile(self._command['filename'])
-        confile = ConnectorFile(locals())
+        confile = ConnectorFile(self._module)
         sys.stdout.write(confile.list)
 
     def _help(self):
-        execfile(self._command['filename'])
-        confile = ConnectorFile(locals())
+        confile = ConnectorFile(self._module)
         sys.stdout.write(confile.
                          functions[self._command['function']].
                          help)
         
+    @property
+    def _module(self):
+        return __import__(self._command['filename'].
+                          replace('.py', ''))
+        
         
 class ConnectorFile(object):
     
-    def __init__(self, namespace):
+    def __init__(self, module):
         self.functions = {}
-        for name, obj in namespace.items():
-            if (hasattr(obj, '__call__') and
-                getattr(obj, '__module__', None) == '__main__'):
+        for name in dir(module):
+            obj = getattr(module, name)
+            if (isinstance(obj, types.FunctionType) and
+                getattr(obj, '__module__', None) == module.__name__):
                 self.functions[name] = ConnectorFunction(obj)
         
     @property
@@ -133,16 +137,10 @@ import unittest
 class ConnectorFileTest(unittest.TestCase):
     
     def setUp(self):
-        def function1(): 
-            pass
-        def function2(): 
-            pass        
-        function1.__module__ = '__main__'
-        function2.__module__ = '__main__'
-        self.confile = ConnectorFile(locals())
+        self.confile = ConnectorFile(sys.modules[__name__])
         
     def test_list(self):
-        self.assertEqual(self.confile.list, 'function1\nfunction2\n')
+        self.assertEqual(self.confile.list, 'main\n')
 
 
 class ConnectorFunctionTest(unittest.TestCase):
