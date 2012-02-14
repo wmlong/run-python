@@ -23,7 +23,7 @@ setup(#Data
       download_url='https://github.com/respect31/run-python/tarball/master',
       license='Apache 2.0',
       classifiers=[
-          'Development Status :: 2 - Pre-Alpha',
+          'Development Status :: 3 - Alpha',
           'Environment :: Console',
           'Intended Audience :: Developers',
           'Intended Audience :: System Administrators',
