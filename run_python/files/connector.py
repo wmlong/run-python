@@ -49,7 +49,8 @@ class ConnectorFile(object):
         self.functions = {}
         for name in dir(module):
             obj = getattr(module, name)
-            if (isinstance(obj, types.FunctionType) and
+            if (not name.startswith('_') and
+                isinstance(obj, types.FunctionType) and                
                 getattr(obj, '__module__', None) == module.__name__):
                 self.functions[name] = ConnectorFunction(obj)
         
