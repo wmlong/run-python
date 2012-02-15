@@ -23,9 +23,9 @@ class Connector(object):
             self._help()
     
     def _run(self):
-        exec ('self._module.{function}({arguments})'.
-              format(function=self._command['function'],
-                     arguments=self._command['arguments']))
+        eval('self._module.{function}({arguments})'.
+             format(function=self._command['function'],
+                    arguments=self._arguments), globals(), locals())
         
     def _list(self):
         confile = ConnectorFile(self._module)
@@ -42,7 +42,25 @@ class Connector(object):
         return __import__(self._command['filename'].
                           replace('.py', ''))
         
-        
+    @property
+    def _arguments(self):
+        arguments = []
+        for argument in self._command['arguments']:
+            try:
+                (name, value,) = argument.split('=', 1)
+            except ValueError:
+                (name, value,) = (None, argument,)
+            try:
+                value = eval(value, {}, {})
+            except NameError:
+                value = repr(value)
+            if name:
+                arguments.append('='.join([name, str(value)]))
+            else:
+                arguments.append(str(value))
+        return ', '.join(arguments)
+                  
+                
 class ConnectorFile(object):
     
     def __init__(self, module):
