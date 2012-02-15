@@ -1,2 +1,4 @@
 from .driver import PythonDriver
-from .version import VERSION
+from .version import Version
+
+__version__ = Version()

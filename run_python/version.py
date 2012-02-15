@@ -1,1 +1,17 @@
-VERSION = '0.1.0.alpha'
+class Version(str):
+    
+    #Current
+    MAJOR = 0
+    MINOR = 0
+    MICRO = 0
+    RELEASELEVEL = 'final'
+    
+    def __new__(self):
+        items = [str(self.MAJOR), str(self.MINOR), str(self.MICRO)]
+        if self.RELEASELEVEL != 'final':
+            items.append(self.RELEASELEVEL)    
+        return str.__new__(self, '.'.join(items))
+    
+    @property
+    def info(self):
+        return (self.MAJOR, self.MINOR, self.MICRO, self.RELEASELEVEL)         

@@ -1,9 +1,9 @@
+import run_python
 from setuptools import setup, find_packages
-from run_python import VERSION
 
 setup(#Data
       name='run-python',
-      version=VERSION,
+      version=run_python.__version__,
       packages=find_packages(exclude=['tests*']),
       package_data={
           'run_python': ['files/*'],
