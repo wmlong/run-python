@@ -16,7 +16,7 @@ def release(type='minor', level='final'):
         commit('release')
         tag(version())
 
-def test():
+def test(): #TODO: it doesn't work from CL run test
     """
     Test package.
     """
@@ -36,7 +36,7 @@ def version(action='print', type='minor', level='final'):
     if action == 'print':
         print(package.__version__)
     elif action == 'increase':
-        for line in fileinput.input('run/version.py', inplace=True):
+        for line in fileinput.input(package.__name__+'/version.py', inplace=True):
             if line.strip().startswith(type.upper()):
                 current = getattr(package.__version__, type.upper())     
                 line = line.replace(str(current), str(current+1))
