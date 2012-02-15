@@ -46,19 +46,32 @@ class Connector(object):
     def _arguments(self):
         arguments = []
         for argument in self._command['arguments']:
-            try:
-                (name, value,) = argument.split('=', 1)
-            except ValueError:
-                (name, value,) = (None, argument,)
-            try:
-                value = eval(value, {}, {})
-            except NameError:
-                value = repr(value)
-            if name:
-                arguments.append('='.join([name, str(value)]))
-            else:
-                arguments.append(str(value))
+            (name, value,) = self._split_argument(argument)            
+            value = self._represent_argument_value(value)
+            arguments.append(self._join_argument(name, value))            
         return ', '.join(arguments)
+    
+    @staticmethod
+    def _split_argument(argument):
+        splited = argument.split('=', 1)
+        if len(splited) == 1:
+            return (None, argument,)
+        else:
+            return splited
+    
+    @staticmethod
+    def _represent_argument_value(value):
+        try:
+            return str(eval(value, {}, {}))
+        except NameError:
+            return repr(value)
+
+    @staticmethod        
+    def _join_argument(name, value):
+        if not name:
+            return value                
+        else:
+            return '='.join([name, value])
                   
                 
 class ConnectorFile(object):
