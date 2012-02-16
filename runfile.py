@@ -12,15 +12,22 @@ def release(type='minor', level='final'):
     - micro
     """
     if test() == 0:
-        version(action='increase', type='minor', level='final')
-        commit('release')
-        tag(version())
-
-def test(): #TODO: it doesn't work from CL run test
+        commit()
+        version(action='increase', type=type, level=level)
+        commit(message='updated version')
+        push(branch='develop')
+        checkout(branch='master')
+        merge(branch='develop')
+        tag(name=version(action='return'))
+        push(branch='master', tags=True)
+        checkout(branch='develop')
+        
+def test():
     """
     Test package.
     """
-    return subprocess.call('nosetests', shell=True)
+    command = ['nosetests']
+    return subprocess.call(command)
 
 def version(action='print', type='minor', level='final'):
     """
@@ -33,28 +40,60 @@ def version(action='print', type='minor', level='final'):
     - minor
     - micro
     """
-    if action == 'print':
-        print(package.__version__)
+    version = package.__version__
+    if action == 'return':
+        return version    
+    elif action == 'print':
+        print(version)
     elif action == 'increase':
-        for line in fileinput.input(package.__name__+'/version.py', inplace=True):
+        module = sys.modules[version.__module__]
+        source = module. __file__.replace('.pyc', '.py')
+        for line in fileinput.input(source, inplace=True):
             if line.strip().startswith(type.upper()):
                 current = getattr(package.__version__, type.upper())     
                 line = line.replace(str(current), str(current+1))
             if line.strip().startswith('RELEASELEVEL'):
-                line = line.replace(package.__version__.RELEASELEVEL, level)
+                line = line.replace(version.RELEASELEVEL, level)
             sys.stdout.write(line)
+        reload(module)
         reload(package)
         
-def commit(message):
+def commit(message=None):
     """
     Commit changes with message.
     """
-    subprocess.call(['git commit -am "{message}"'.
-                     format(message=message)], shell=True)
+    command = ['git', 'commit', '-a']
+    if message:
+        command.append('-m')
+        command.append(message)
+    subprocess.call(command)
     
 def tag(name):
     """
     Add tag name.
     """
-    subprocess.call(['git tag {name}'.
-                     format(name=name)], shell=True)   
+    command = ['git', 'tag', name]
+    subprocess.call(command)
+    
+def checkout(branch):
+    """
+    Checkout branch.
+    """
+    command = ['git', 'checkout', branch]
+    subprocess.call(command)
+    
+def merge(branch):
+    """
+    Merge branch.
+    """
+    command = ['git', 'merge', branch]
+    subprocess.call(command)
+    
+def push(branch, tags=False):
+    """
+    Push branch to origin.
+    """
+    command = ['git', 'push', 'origin', branch]
+    if tags:
+        command.append('--tags')
+    subprocess.call(command)
