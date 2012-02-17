@@ -20,14 +20,8 @@ def release(type='minor', level='final'):
         merge(branch='develop')
         tag(name=version(action='return'))
         push(branch='master', tags=True)
+        register()
         checkout(branch='develop')
-
-def register():
-    """
-    Register package.
-    """
-    command = ['sudo', 'python', 'setup.py', 'register', 'sdist', 'upload']
-    return subprocess.call(command)
         
 def test():
     """
@@ -64,7 +58,14 @@ def version(action='print', type='minor', level='final'):
             sys.stdout.write(line)
         reload(module)
         reload(package)
-        
+
+def register():
+    """
+    Register package.
+    """
+    command = ['sudo', 'python', 'setup.py', 'register', 'sdist', 'upload']
+    return subprocess.call(command)
+
 def commit(message=None):
     """
     Commit changes with message.
