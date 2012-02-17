@@ -28,7 +28,7 @@ class RunTest_run(RunTest):
     
     PATCH = RunTest.PATCH.copy()
     PATCH.update({
-        'sys.argv': ['run', 'function_normal', '1', 'b=test'],        
+        'sys.argv': ['run', 'function_normal', '1', 'b=test words'],        
     })
     
     def test(self):

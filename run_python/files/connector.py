@@ -62,8 +62,9 @@ class Connector(object):
     @staticmethod
     def _represent_argument_value(value):
         try:
+            #TODO: pass len([]) - fix?
             return str(eval(value, {}, {}))
-        except NameError:
+        except Exception:
             return repr(value)
 
     @staticmethod        
