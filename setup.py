@@ -20,7 +20,8 @@ setup(#Data
       maintainer='Respect31',
       maintainer_email='team@respect31.com',
       url='https://github.com/respect31/run-python',
-      download_url='https://github.com/respect31/run-python/tarball/master',
+      download_url=('https://github.com/respect31/run-python/tarball/{version}'.
+                    format(version=run_python.__version__)),
       license='Apache 2.0',
       classifiers=[
           'Development Status :: 3 - Alpha',
