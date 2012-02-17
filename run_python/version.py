@@ -3,7 +3,7 @@ class Version(str):
     #Current
     MAJOR = 0
     MINOR = 1
-    MICRO = 0
+    MICRO = 1
     RELEASELEVEL = 'final'
     
     def __new__(self):
