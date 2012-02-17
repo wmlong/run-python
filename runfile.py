@@ -21,6 +21,13 @@ def release(type='minor', level='final'):
         tag(name=version(action='return'))
         push(branch='master', tags=True)
         checkout(branch='develop')
+
+def register():
+    """
+    Register package.
+    """
+    command = ['sudo', 'python', 'setup.py', 'register', 'sdist', 'upload']
+    return subprocess.call(command)
         
 def test():
     """
