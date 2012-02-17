@@ -8,7 +8,7 @@ setup(#Data
       package_data={
           'run_python': ['files/*'],
       },      
-      install_requires=['run_core'],
+      install_requires=['run-core'],
       test_suite='nose.collector',
       tests_require=['nose'],
       
