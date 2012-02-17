@@ -1,0 +1,8 @@
+graft tests
+
+include *.gitignore
+include *.rst
+include *.in
+include *.py
+
+global-exclude *.pyc
