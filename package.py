@@ -1,3 +1,4 @@
+import os
 import imp
 from setuptools import find_packages
 
@@ -45,7 +46,8 @@ class Package(dict):
         
     @property
     def version(self):
-        meta = imp.find_module('version', ['run_python'])
+        path = os.path.join(os.path.dirname(__file__), 'run_python')        
+        meta = imp.find_module('version', [path])
         module = imp.load_module('version', *meta)
         meta[0].close()
         return module.Version()
