@@ -1,9 +1,7 @@
-import sys
-import fileinput
 import subprocess
-import run_python as package
+from package import Package
 
-def release(type='minor', level='final'):
+def release(step='minor', level='final'):
     """
     Release package with version type and level.
     Types:
@@ -13,7 +11,7 @@ def release(type='minor', level='final'):
     """
     if test() == 0:
         commit()
-        version(action='increase', type=type, level=level)
+        version(action='increase', step=step, level=level)
         commit(message='updated version')
         push(branch='develop')
         checkout(branch='master')
@@ -21,6 +19,7 @@ def release(type='minor', level='final'):
         tag(name=version(action='return'))
         push(branch='master', tags=True)
         register()
+        clean()
         checkout(branch='develop')
         
 def test():
@@ -30,7 +29,7 @@ def test():
     command = ['nosetests']
     return subprocess.call(command)
 
-def version(action='print', type='minor', level='final'):
+def version(action='print', step='minor', level='final'):
     """
     Print or increase with type and level package version.   
     Actions:
@@ -41,31 +40,28 @@ def version(action='print', type='minor', level='final'):
     - minor
     - micro
     """
-    version = package.__version__
+    package = Package()
     if action == 'return':
-        return version    
+        return package.version
     elif action == 'print':
-        print(version)
-    elif action == 'increase':
-        module = sys.modules[version.__module__]
-        source = module. __file__.replace('.pyc', '.py')
-        for line in fileinput.input(source, inplace=True):
-            if line.strip().startswith(type.upper()):
-                current = getattr(package.__version__, type.upper())     
-                line = line.replace(str(current), str(current+1))
-            if line.strip().startswith('RELEASELEVEL'):
-                line = line.replace(version.RELEASELEVEL, level)
-            sys.stdout.write(line)
-        reload(module)
-        reload(package)
+        print(package.version)
+    elif action == 'increase':        
+        package.version = (package.version.
+                           next(step=step, level=level))            
 
 def register():
     """
     Register package.
     """
-    command = ['sudo', 'python', 'setup.py', 'register', 'sdist', 'upload']
+    command = ['sudo', 'python', 'setup.py', 
+               'register', 'sdist', 'upload']
     return subprocess.call(command)
 
+def clean():
+    command = ['sudo', 'rm', '-rf', 
+               'dist', 'build', '*.egg-info']
+    return subprocess.call(' '.join(command), shell=True)
+       
 def commit(message=None):
     """
     Commit changes with message.
