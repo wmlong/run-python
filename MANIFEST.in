@@ -1,9 +1,7 @@
 graft run_python
 graft tests
 
-include *.gitignore
 include *.rst
-include *.in
 include *.py
 
 global-exclude *.pyc
