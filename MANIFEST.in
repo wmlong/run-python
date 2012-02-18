@@ -1,3 +1,4 @@
+graft run_python
 graft tests
 
 include *.gitignore

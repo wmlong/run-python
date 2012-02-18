@@ -6,9 +6,6 @@ class Package(dict):
     
     #Maindata
     NAME = 'run-python'
-    PACKAGE_DATA={
-        'run_python': ['files/*'],
-    }
     INSTALL_REQUIRES = ['run-core']
     TEST_SUITE = 'nose.collector'
     TESTS_REQUIRE = ['nose']
