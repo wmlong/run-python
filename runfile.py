@@ -1,22 +1,31 @@
 import subprocess
 from package import Package
 
+package = Package()
+
+def version():
+    """
+    Print current package version.
+    """
+    print(package.version)
+    
 def release(step, level='final'):
     """
-    Release package with version type and level.
-    Types:
+    Release package with version step and level.
+    Steps:
     - major
     - minor
     - micro
+    - level
     """
     if test() == 0:
         commit()
-        version(action='increase', step=step, level=level)
+        package.version = package.version.next(step=step, level=level) 
         commit(message='updated version')
         push(branch='develop')
         checkout(branch='master')
         merge(branch='develop')
-        tag(name=version(action='return'))
+        tag(name=package.version)
         push(branch='master', tags=True)
         register()
         clean()
@@ -27,27 +36,7 @@ def test():
     Test package.
     """
     command = ['nosetests']
-    return subprocess.call(command)
-
-def version(action='print', step='minor', level='final'):
-    """
-    Print or increase with type and level package version.   
-    Actions:
-    - print
-    - increase
-    Types:
-    - major
-    - minor
-    - micro
-    """
-    package = Package()
-    if action == 'return':
-        return package.version
-    elif action == 'print':
-        print(package.version)
-    elif action == 'increase':        
-        package.version = (package.version.
-                           next(step=step, level=level))            
+    return subprocess.call(command)            
 
 def register():
     """
