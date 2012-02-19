@@ -1,3 +1,4 @@
+import sys
 import subprocess
 from package import Package
 
@@ -18,18 +19,25 @@ def release(step, level='final'):
     - micro
     - level
     """
-    if test() == 0:
-        commit()
-        package.version = package.version.next(step=step, level=level) 
-        commit(message='updated version')
-        push(branch='develop')
-        checkout(branch='master')
-        merge(branch='develop')
-        tag(name=package.version)
-        push(branch='master', tags=True)
-        register()
-        clean()
-        checkout(branch='develop')
+    version = package.version.next(step=step, level=level)
+    if version == package.version:
+        sys.exit('Incorrect step/level')  
+    if test() != 0:
+        sys.exit('Tests failed')    
+    if not _confirm('Release version {version}?'.
+                    format(version=version)):
+        sys.exit('Aborted by user')
+    commit()
+    package.version = version 
+    commit(message='updated version')
+    push(branch='develop')
+    checkout(branch='master')
+    merge(branch='develop')
+    tag(name=package.version)
+    push(branch='master', tags=True)
+    register()
+    clean()
+    checkout(branch='develop')
         
 def test():
     """
@@ -90,3 +98,10 @@ def push(branch, tags=False):
     if tags:
         command.append('--tags')
     subprocess.call(command)
+    
+def _confirm(text):
+    response = raw_input('{text} [y/n]: '.format(text=text))
+    if response.lower() == 'y':
+        return True
+    else:
+        return False
