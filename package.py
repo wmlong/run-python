@@ -57,7 +57,8 @@ class Package(dict):
         code = version.code
         with open(self.version.path, 'w') as f:
             f.write(code)
-
+        self['version'] = self.version
+      
     @property
     def packages(self):
         return find_packages(exclude=['tests*'])
