@@ -1,7 +1,7 @@
 import subprocess
 from package import Package
 
-def release(step='minor', level='final'):
+def release(step, level='final'):
     """
     Release package with version type and level.
     Types:

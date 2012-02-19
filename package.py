@@ -69,5 +69,6 @@ class Package(dict):
     
     @property    
     def download_url(self):
-        return ('https://github.com/respect31/run-python/tarball/{version}'.
-                format(version=self.version))
+        return ('{url}/tarball/{version}'.
+                format(url=self.URL,
+                       version=self.version))
