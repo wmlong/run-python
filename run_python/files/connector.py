@@ -25,7 +25,7 @@ class Connector(object):
     
     def _run(self):
         eval('self._module.{function}({arguments})'.
-             format(function=self._command['function'],
+             format(function=self._function,
                     arguments=self._arguments), globals(), locals())
         
     def _list(self):
@@ -35,13 +35,17 @@ class Connector(object):
     def _help(self):
         runfile = Runfile(self._module)
         sys.stdout.write(runfile.
-                         functions[self._command['function']].
+                         functions[self._function].
                          help)
         
     @property
     def _module(self):
         return __import__(self._command['filename'].
                           replace('.py', ''))
+    
+    @property
+    def _function(self):
+        return self._command['function']
         
     @property
     def _arguments(self):
@@ -63,8 +67,7 @@ class Connector(object):
     @staticmethod
     def _represent_argument_value(value):
         try:
-            #TODO: pass len([]) - fix?
-            return str(eval(value, {}, {}))
+            return str(eval(value, {}, {})) #TODO: pass len([]) - fix?
         except Exception:
             return repr(value)
 
