@@ -84,14 +84,14 @@ class Runfile(object):
             if (not name.startswith('_') and
                 isinstance(obj, types.FunctionType) and                
                 getattr(obj, '__module__', None) == module.__name__):
-                self.functions[name] = ConnectorFunction(obj)
+                self.functions[name] = Function(obj)
         
     @property
     def list(self):
         return '\n'.join(sorted(self.functions))+'\n'
 
 
-class ConnectorFunction(object):
+class Function(object):
     
     def __init__(self, function):
         self._function = function
@@ -176,32 +176,34 @@ class RunfileTest(unittest.TestCase):
         self.assertEqual(self.runfile.list, 'main\n')
 
 
-class ConnectorFunctionTest(unittest.TestCase):
+class FunctionTest(unittest.TestCase):
     
     def setUp(self):
         def function(a, b='default', *args, **kwargs): 
-            """docstring"""
+            """
+            docstring
+            """
             pass
-        self.confunc = ConnectorFunction(function)
+        self.function = Function(function)
         
     def test_name(self):
-        self.assertEqual(self.confunc.name, 'function')
+        self.assertEqual(self.function.name, 'function')
         
     def test_help(self):
         self.assertEqual(
-            self.confunc.help, 
+            self.function.help, 
             "function(a, b='default', *args, **kwargs)\ndocstring\n")
 
         
-class ConnectorFunctionTest_empty_function(unittest.TestCase):
+class FunctionTest_empty_function(unittest.TestCase):
     
     def setUp(self):
         def empty():
             pass
-        self.confunc = ConnectorFunction(empty)
+        self.function = Function(empty)
     
     def test_name(self):
-        self.assertEqual(self.confunc.name, 'empty') 
+        self.assertEqual(self.function.name, 'empty') 
         
     def test_help(self):
-        self.assertEqual(self.confunc.help, 'empty()\n')               
+        self.assertEqual(self.function.help, 'empty()\n')               
