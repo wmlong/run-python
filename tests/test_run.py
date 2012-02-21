@@ -13,56 +13,29 @@ sys, process
 class RunTest(unittest.TestCase):
     
     PATCH = {
-        'process.cwd': os.path.dirname(__file__)          
+        'process.cwd': os.path.dirname(__file__),
+        'sys.argv': [], #TODO: It's a hack! Replace by normal repatching in methods
     }
     
     def setUp(self):
         self.patcher = Patcher(globals())
-        self.patcher.patch(self.PATCH)
+        self.patcher.patch(self.PATCH) 
         
     def tearDown(self):
         self.patcher.restore()
-        
-      
-class RunTest_run(RunTest):
     
-    PATCH = RunTest.PATCH.copy()
-    PATCH.update({
-        'sys.argv': ['run', 'function_normal', '1', 'b=test words'],        
-    })
-    
-    def test(self):
+    def test_run(self):
+        sys.argv = ['run', 'function_normal', '1', 'b=test words']
         run()   
 
-  
-class RunTest_list(RunTest):
-    
-    PATCH = RunTest.PATCH.copy()
-    PATCH.update({
-        'sys.argv': ['run'],        
-    })
-    
-    def test(self):
+    def test_list(self):
+        sys.argv = ['run']
         run()  
 
-
-class RunTest_help(RunTest):
-    
-    PATCH = RunTest.PATCH.copy()
-    PATCH.update({
-        'sys.argv': ['run', '-h'],
-    })
-            
-    def test(self):
+    def test_help(self):
+        sys.argv = ['run', '-h']
         self.assertRaises(SystemExit, run)
-                
-        
-class RunTest_help_function(RunTest):
     
-    PATCH = RunTest.PATCH.copy()
-    PATCH.update({
-        'sys.argv': ['run', 'function_normal', '-h'],        
-    })
-            
-    def test(self):
+    def test_help_function(self):
+        sys.argv = ['run', 'function_normal', '-h']
         run() 
