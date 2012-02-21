@@ -12,4 +12,10 @@ def function_normal(a, b='default', *args, **kwargs):
     sys.stdout.write('function_normal: {a}, {b}'.format(a=a, b=b))
     
 def function_empty():
-    pass 
+    pass
+
+
+class ClassToRun(object):
+    
+    def function(self):
+        pass
