@@ -7,6 +7,7 @@ import inspect
 def main():    
     connector = Connector(os.environ)
     connector.process()
+
          
 class Connector(object):
     
@@ -89,6 +90,10 @@ class Runfile(object):
     @property
     def list(self):
         return '\n'.join(sorted(self.functions))+'\n'
+
+
+class Runclass(object):
+    pass
 
 
 class Function(object):
