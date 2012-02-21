@@ -28,12 +28,12 @@ class Connector(object):
                     arguments=self._arguments), globals(), locals())
         
     def _list(self):
-        confile = ConnectorFile(self._module)
-        sys.stdout.write(confile.list)
+        runfile = Runfile(self._module)
+        sys.stdout.write(runfile.list)
 
     def _help(self):
-        confile = ConnectorFile(self._module)
-        sys.stdout.write(confile.
+        runfile = Runfile(self._module)
+        sys.stdout.write(runfile.
                          functions[self._command['function']].
                          help)
         
@@ -75,7 +75,7 @@ class Connector(object):
             return '='.join([name, value])
                   
                 
-class ConnectorFile(object):
+class Runfile(object):
     
     def __init__(self, module):
         self.functions = {}
@@ -167,13 +167,13 @@ if __name__ == '__main__':
 
 import unittest
 
-class ConnectorFileTest(unittest.TestCase):
+class RunfileTest(unittest.TestCase):
     
     def setUp(self):
-        self.confile = ConnectorFile(sys.modules[__name__])
+        self.runfile = Runfile(sys.modules[__name__])
         
     def test_list(self):
-        self.assertEqual(self.confile.list, 'main\n')
+        self.assertEqual(self.runfile.list, 'main\n')
 
 
 class ConnectorFunctionTest(unittest.TestCase):
