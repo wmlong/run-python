@@ -1,5 +1,6 @@
 import os
 import sys
+import copy
 import json
 import types
 import inspect
@@ -136,15 +137,8 @@ class Function(object):
     @cachedproperty
     def _argstring_general(self):
         general = []
-        if self._argspec.defaults:
-            defaults = list(self._argspec.defaults)
-        else:
-            defaults = []
-        if self._ismethod:
-            args = self._argspec.args[1:]
-        else:
-            args = self._argspec.args
-        for arg in reversed(args):
+        defaults = copy.copy(self._defaults)
+        for arg in reversed(self._args):
             if not defaults:
                 general.insert(0, arg)
             else:
@@ -169,6 +163,20 @@ class Function(object):
             keywords.append('**{keywords}'.
                             format(keywords=self._argspec.keywords))
         return keywords
+
+    @cachedproperty
+    def _args(self):
+        if self._ismethod:
+            return self._argspec.args[1:]
+        else:
+            return self._argspec.args
+
+    @cachedproperty
+    def _defaults(self):
+        if self._argspec.defaults:
+            return list(self._argspec.defaults)
+        else:
+            return []
 
     @cachedproperty
     def _argspec(self):
