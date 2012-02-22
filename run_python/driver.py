@@ -1,15 +1,14 @@
 import os
 import subprocess
 from run.drivers.base import BaseDriver
-from run.library.reader import Reader
 from run.library.property import cachedproperty
 
 class PythonDriver(BaseDriver):
     
-    CONNECTOR_FILE = ['files', 'connector.py']    
+    CONNECTOR = ['files', 'connector.py']    
 
     def process(self):
-        return subprocess.call(['python', '-c', self._connector], 
+        return subprocess.call(['python', self._connector], 
                                env=self._environ)
 
     @cachedproperty
@@ -20,8 +19,5 @@ class PythonDriver(BaseDriver):
     
     @cachedproperty
     def _connector(self):
-        return self._reader.read(*self.CONNECTOR_FILE)
-    
-    @cachedproperty
-    def _reader(self):
-        return Reader(os.path.dirname(__file__))
+        return os.path.join(os.path.dirname(__file__),
+                            *self.CONNECTOR)

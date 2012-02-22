@@ -52,6 +52,7 @@ class Connector(object):
 class Functions(object):
     
     def __new__(cls, runfile, runclass):
+        #TODO: repair!!!
         module = __import__(runfile.replace('.py', ''))
         try:
             return ClassFunctions(getattr(module, runclass))
@@ -200,10 +201,12 @@ class Arguments(str):
     @staticmethod
     def _split_argument(argument):
         splited = argument.split('=', 1)
-        if len(splited) == 1:
-            return (None, argument,)
-        else:
-            return splited
+        argument = splited.pop()
+        try:
+            name = splited.pop()
+        except IndexError:
+            name = None
+        return (name, argument)
     
     @staticmethod
     def _represent_argument_value(value):

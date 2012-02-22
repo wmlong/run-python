@@ -37,4 +37,4 @@ class PythonDriverTest(unittest.TestCase):
         self.assertEqual(self.driver._environ['RUN_COMMAND'], {})
         
     def test_connector(self):
-        self.assertIn('Connector', self.driver._connector)             
+        self.assertTrue(self.driver._connector.endswith('.py'))             
