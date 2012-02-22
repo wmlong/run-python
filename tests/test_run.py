@@ -26,15 +26,27 @@ class RunTest(unittest.TestCase):
     
     def test_run(self):
         sys.argv = ['run', 'function_normal', '1', 'b=test words']
-        run()   
+        run()
+            
+    def test_run_method(self):
+        sys.argv = ['run', 'method', '-cClassToRun']
+        run()             
 
     def test_list(self):
         sys.argv = ['run']
-        run()  
+        run()
+        
+    def test_list_methods(self):
+        sys.argv = ['run', '-cClassToRun']
+        run()            
 
     def test_help(self):
         sys.argv = ['run', '-h']
         self.assertRaises(SystemExit, run)
+            
+    def test_help_method(self):
+        sys.argv = ['run', 'method', '-cClassToRun', '-h']
+        run()             
     
     def test_help_function(self):
         sys.argv = ['run', 'function_normal', '-h']

@@ -3,6 +3,8 @@ import sys
 import json
 import types
 import inspect
+from abc import ABCMeta, abstractmethod
+from run.library.property import cachedproperty
  
 def main():    
     connector = Connector(os.environ)
@@ -22,39 +24,170 @@ class Connector(object):
                 self._list()
         else:
             self._help()
-    
-    def _run(self):
-        eval('self._module.{function}({arguments})'.
-             format(function=self._function,
-                    arguments=self._arguments), globals(), locals())
-        
-    def _list(self):
-        runfile = Runfile(self._module)
-        sys.stdout.write(runfile.list)
 
-    def _help(self):
-        runfile = Runfile(self._module)
-        sys.stdout.write(runfile.
-                         functions[self._function].
-                         help)
-        
-    @property
-    def _module(self):
-        return __import__(self._command['filename'].
-                          replace('.py', ''))
+    def _run(self):
+        self._function(self._arguments)
+
+    def _list(self):
+        sys.stdout.write(self._functions.list)
     
-    @property
+    def _help(self):
+        sys.stdout.write(self._function.help)  
+    
+    @cachedproperty
     def _function(self):
-        return self._command['function']
-        
-    @property
+        return self._functions[self._command['function']]
+    
+    @cachedproperty
+    def _functions(self):
+        return Functions(self._command['filename'],
+                         self._command['runclass'])
+       
+    @cachedproperty
     def _arguments(self):
+        return Arguments(self._command['arguments'])
+
+ 
+class Functions(object):
+    
+    def __new__(cls, runfile, runclass):
+        module = __import__(runfile.replace('.py', ''))
+        try:
+            return ClassFunctions(getattr(module, runclass))
+        except AttributeError:
+            return ModuleFunctions(module)
+    
+    
+class BaseFunctions(dict):
+    
+    __metaclass__ = ABCMeta
+
+    @abstractmethod    
+    def __init__(self):
+        pass #pragma: no cover
+    
+    @cachedproperty
+    def list(self):
+        return '\n'.join(sorted(self))+'\n'
+     
+                
+class ModuleFunctions(BaseFunctions):
+        
+    def __init__(self, module):
+        functions = {}
+        for name in dir(module):
+            obj = getattr(module, name)
+            if (not name.startswith('_') and
+                isinstance(obj, types.FunctionType) and                
+                getattr(obj, '__module__', None) == module.__name__):
+                functions[name] = Function(obj)
+        self.update(functions)
+
+
+class ClassFunctions(BaseFunctions):
+    
+    def __init__(self, cls):
+        functions = {}
+        instance = cls()
+        for name in dir(instance):
+            obj = getattr(instance, name)
+            if not name.startswith('_'):
+                functions[name] = Function(obj)
+        self.update(functions)
+
+
+class Function(object):
+    
+    def __init__(self, function):
+        self._function = function
+        
+    def __call__(self, arguments):
+        return eval('self._function({arguments})'.
+                    format(arguments=arguments), globals(), locals())
+
+    @cachedproperty
+    def help(self):
+        return '\n'.join(self._signature+self._docstring)+'\n'
+
+    @cachedproperty
+    def _signature(self):
+        return [('{name}({argstring})'.
+                 format(name=self._name,
+                        argstring=self._argstring))]
+    
+    @cachedproperty
+    def _docstring(self):
+        docstring = []
+        getdoc = inspect.getdoc(self._function)
+        if getdoc:
+            docstring.append(getdoc)
+        return docstring
+
+    @cachedproperty
+    def _name(self):
+        return self._function.func_name
+
+    @cachedproperty
+    def _argstring(self):
+        return ', '.join(self._argstring_general+
+                         self._argstring_varargs+
+                         self._argstring_keywords)
+
+    @cachedproperty
+    def _argstring_general(self):
+        general = []
+        if self._argspec.defaults:
+            defaults = list(self._argspec.defaults)
+        else:
+            defaults = []
+        if self._ismethod:
+            args = self._argspec.args[1:]
+        else:
+            args = self._argspec.args
+        for arg in reversed(args):
+            if not defaults:
+                general.insert(0, arg)
+            else:
+                default = repr(defaults.pop())
+                general.insert(0, '{arg}={default}'.
+                                  format(arg=arg, 
+                                         default=default))
+        return general
+    
+    @cachedproperty
+    def _argstring_varargs(self):
+        varargs = []
+        if self._argspec.varargs:
+            varargs.append('*{varargs}'.
+                           format(varargs=self._argspec.varargs))
+        return varargs
+    
+    @cachedproperty
+    def _argstring_keywords(self):
+        keywords = []
+        if self._argspec.keywords:
+            keywords.append('**{keywords}'.
+                            format(keywords=self._argspec.keywords))
+        return keywords
+
+    @cachedproperty
+    def _argspec(self):
+        return inspect.getargspec(self._function)
+    
+    @cachedproperty
+    def _ismethod(self):
+        return isinstance(self._function, types.MethodType)
+
+
+class Arguments(str):
+    
+    def __new__(cls, raw):
         arguments = []
-        for argument in self._command['arguments']:
-            (name, value,) = self._split_argument(argument)            
-            value = self._represent_argument_value(value)
-            arguments.append(self._join_argument(name, value))            
-        return ', '.join(arguments)
+        for argument in raw:
+            (name, value,) = cls._split_argument(argument)            
+            value = cls._represent_argument_value(value)
+            arguments.append(cls._join_argument(name, value))            
+        return str.__new__(cls, ', '.join(arguments))
     
     @staticmethod
     def _split_argument(argument):
@@ -67,7 +200,7 @@ class Connector(object):
     @staticmethod
     def _represent_argument_value(value):
         try:
-            return str(eval(value, {}, {})) #TODO: pass len([]) - fix?
+            return str(eval(value, {}, {})) #TODO: pass len([]) etc - fix?
         except Exception:
             return repr(value)
 
@@ -77,97 +210,6 @@ class Connector(object):
             return value                
         else:
             return '='.join([name, value])
-                  
-                
-class Runfile(object):
-    
-    def __init__(self, module):
-        self.functions = {}
-        for name in dir(module):
-            obj = getattr(module, name)
-            if (not name.startswith('_') and
-                isinstance(obj, types.FunctionType) and                
-                getattr(obj, '__module__', None) == module.__name__):
-                self.functions[name] = Function(obj)
-        
-    @property
-    def list(self):
-        return '\n'.join(sorted(self.functions))+'\n'
-
-
-class Runclass(object):
-    pass
-
-
-class Function(object):
-    
-    def __init__(self, function):
-        self._function = function
-    
-    @property
-    def name(self):
-        return self._function.func_name
-    
-    @property
-    def help(self):
-        return '\n'.join(self._signature+self._docstring)+'\n'
-
-    @property
-    def _signature(self):
-        return [('{name}({argstring})'.
-                 format(name=self.name,
-                        argstring=self._argstring))]
-    
-    @property
-    def _docstring(self):
-        docstring = []
-        getdoc = inspect.getdoc(self._function)
-        if getdoc:
-            docstring.append(getdoc)
-        return docstring
-  
-    @property
-    def _argstring(self):
-        return ', '.join(self._argstring_general+
-                         self._argstring_varargs+
-                         self._argstring_keywords)
-
-    @property
-    def _argstring_general(self):
-        general = []
-        if self._argspec.defaults:
-            defaults = list(self._argspec.defaults)
-        else:
-            defaults = []
-        for arg in reversed(self._argspec.args):
-            if not defaults:
-                general.insert(0, arg)
-            else:
-                default = repr(defaults.pop())
-                general.insert(0, '{arg}={default}'.
-                                  format(arg=arg, 
-                                         default=default))
-        return general
-    
-    @property
-    def _argstring_varargs(self):
-        varargs = []
-        if self._argspec.varargs:
-            varargs.append('*{varargs}'.
-                           format(varargs=self._argspec.varargs))
-        return varargs
-    
-    @property
-    def _argstring_keywords(self):
-        keywords = []
-        if self._argspec.keywords:
-            keywords.append('**{keywords}'.
-                            format(keywords=self._argspec.keywords))
-        return keywords
-
-    @property
-    def _argspec(self):
-        return inspect.getargspec(self._function)
 
     
 if __name__ == '__main__':
@@ -175,10 +217,10 @@ if __name__ == '__main__':
 
 import unittest
 
-class RunfileTest(unittest.TestCase):
+class ModuleFunctionsTest(unittest.TestCase):
     
     def setUp(self):
-        self.runfile = Runfile(sys.modules[__name__])
+        self.runfile = ModuleFunctions(sys.modules[__name__])
         
     def test_list(self):
         self.assertEqual(self.runfile.list, 'main\n')
@@ -194,9 +236,6 @@ class FunctionTest(unittest.TestCase):
             pass
         self.function = Function(function)
         
-    def test_name(self):
-        self.assertEqual(self.function.name, 'function')
-        
     def test_help(self):
         self.assertEqual(
             self.function.help, 
@@ -209,9 +248,6 @@ class FunctionTest_empty_function(unittest.TestCase):
         def empty():
             pass
         self.function = Function(empty)
-    
-    def test_name(self):
-        self.assertEqual(self.function.name, 'empty') 
         
     def test_help(self):
         self.assertEqual(self.function.help, 'empty()\n')               
