@@ -41,7 +41,7 @@ class Connector(object):
     
     @cachedproperty
     def _functions(self):
-        return Functions(self._command['filename'],
+        return Functions(self._command['runfile'],
                          self._command['runclass'])
        
     @cachedproperty
