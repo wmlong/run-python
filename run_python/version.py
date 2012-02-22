@@ -2,8 +2,8 @@ class Version(str):
     
     #Current
     MAJOR = 0
-    MINOR = 1
-    MICRO = 6
+    MINOR = 2
+    MICRO = 0
     LEVEL = 'final'
     
     #Metadata
