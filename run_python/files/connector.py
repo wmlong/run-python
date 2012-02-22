@@ -5,6 +5,7 @@ import json
 import types
 import inspect
 from abc import ABCMeta, abstractmethod
+from run.library.loader import Loader
 from run.library.property import cachedproperty
  
 def main():    
@@ -52,8 +53,10 @@ class Connector(object):
 class Functions(object):
     
     def __new__(cls, runfile, runclass):
-        #TODO: repair!!!
-        module = __import__(runfile.replace('.py', ''))
+        loader = Loader()
+        dirname = os.path.dirname(runfile)
+        basename = os.path.basename(runfile).replace('.py', '')
+        module = loader.load(basename, path=[dirname])
         try:
             return ClassFunctions(getattr(module, runclass))
         except AttributeError:
