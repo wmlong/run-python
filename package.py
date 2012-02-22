@@ -9,7 +9,7 @@ class Package(dict):
     PACKAGE_DATA={         
         '': ['files/*'],
     }
-    INSTALL_REQUIRES = ['run-core']
+    INSTALL_REQUIRES = ['run-core>=0.3']
     TEST_SUITE = 'nose.collector'
     TESTS_REQUIRE = ['nose']
     
