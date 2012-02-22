@@ -14,7 +14,7 @@ class Package(dict):
     TESTS_REQUIRE = ['nose']
     
     #Metadata
-    DESCRIPTION = 'Python driver for Run'
+    DESCRIPTION = 'Python driver for Run.'
     AUTHOR = 'Respect31'
     AUTHOR_EMAIL='team@respect31.com'
     MAINTAINER='Respect31'
