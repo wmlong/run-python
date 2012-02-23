@@ -1,7 +1,7 @@
 import unittest
 import subprocess
-from run.library.patcher import Patcher
-from run_python import PythonDriver  
+from run_python import PythonDriver
+from .patcher import Patcher
 
 #Environment
 subprocess
