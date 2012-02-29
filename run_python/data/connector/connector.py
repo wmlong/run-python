@@ -38,7 +38,16 @@ class Connector(object):
     
     @cachedproperty
     def _function(self):
-        return self._functions[self._command['function']]
+        try:
+            return self._functions[self._command['function']]
+        except KeyError:
+            sys.stdout.write((
+                'Function is not found\n'
+                'Attempts: {functions}\n'
+            ).format(
+                functions=', '.join(sorted(self._functions))
+            ))
+            sys.exit(1)
     
     @cachedproperty
     def _functions(self):
