@@ -12,8 +12,11 @@ def function_normal(a, b='default', *args, **kwargs):
 def function_empty():
     pass
         
-def _hiden(self):
+def _hiden():
     pass
+
+var = 'var'
+
 
 class ClassToRun(object):
     
@@ -25,3 +28,5 @@ class ClassToRun(object):
         
     def _hiden(self):
         pass
+    
+    var = 'var'

@@ -95,7 +95,9 @@ class ClassFunctions(BaseFunctions):
         instance = cls()
         for name in dir(instance):
             obj = getattr(instance, name)
-            if not name.startswith('_'):
+            if (not name.startswith('_') and
+                isinstance(obj, (types.MethodType, 
+                                 types.FunctionType,))):
                 functions[name] = Function(obj)
         self.update(functions)
 
