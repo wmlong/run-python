@@ -5,7 +5,12 @@ from run.drivers.base import BaseDriver
 
 class PythonDriver(BaseDriver):
     
-    CONNECTOR = ['files', 'connector.py']    
+    DATA = {         
+        'dir': 'data',
+        'map': {
+            'connector': ['connector', 'connector.py']
+        }
+    }    
 
     def process(self):
         return subprocess.call(['python', self._connector], 
@@ -19,5 +24,6 @@ class PythonDriver(BaseDriver):
     
     @cachedproperty
     def _connector(self):
-        return os.path.join(os.path.dirname(__file__),
-                            *self.CONNECTOR)
+        return os.path.join(os.path.dirname(__file__), 
+                            self.DATA['dir'], 
+                            *self.DATA['map']['connector'])

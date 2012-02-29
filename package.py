@@ -5,7 +5,7 @@ class Package(Package):
     #Maindata
     NAME = 'run-python'
     PACKAGE_DATA={         
-        '': ['files/*'],
+        '': ['data/*'],
     }
     INSTALL_REQUIRES = ['box', 'lib31', 'run-core>=0.3.1']
     TEST_SUITE = 'nose.collector'
