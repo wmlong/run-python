@@ -254,7 +254,8 @@ class FunctionTest(unittest.TestCase):
     def test_help(self):
         self.assertEqual(
             self.function.help, 
-            "function(a, b='default', *args, **kwargs)\ndocstring\n")
+            "function(a, b='default', *args, **kwargs)\ndocstring\n"
+        )
 
         
 class FunctionTest_empty_function(unittest.TestCase):
